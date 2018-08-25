@@ -34,3 +34,16 @@ class BayesianRegressor(Regressor):
         self.w_mean = w_mean
         self.w_precision = w_precision
         self.w_conv = np.linalg.inv(self.w_precision)
+
+    def _predict(self, X, return_std=False, sample_size=None):
+        if isinstance(sample_size, int):
+            w_sample = np.random.multivariate_normal(self.w_mean, self.w_conv, sample_size)
+            y = X @ w_sample.T
+            return y
+        y = X @ self.w_mean
+        if return_std:
+            y_var = 1/self.beta + np.sum(X @ self.w_conv * X, axis=1)
+            y_std = np.sqrt(y_var)
+            return y, y_std
+        return y
+
