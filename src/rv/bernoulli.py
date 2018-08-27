@@ -4,7 +4,7 @@ from src.rv.beta import Beta
 
 class Bernoulli(RandomVariable):
     def __init__(self, mu=None):
-        super.__init__()
+        super().__init__()
         self.mu = mu
     
     @property
