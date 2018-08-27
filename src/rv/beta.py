@@ -13,7 +13,7 @@ class Beta(RandomVariable):
       / gamma(n_ones) / gamma(n_zeros)
     """
     def __init__(self, n_zeros, n_ones):
-        super.__init__()
+        super().__init__()
         if not isinstance(n_ones, (int, float, np.number, np.ndarray)):
             raise ValueError(
                 "{} is not supported for n_ones"
