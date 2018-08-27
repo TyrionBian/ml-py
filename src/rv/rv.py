@@ -34,7 +34,7 @@ class RandomVariable(object):
         estimate parameters of the distribution
         """
         self._check_input(X)
-        if hasattr("_fit"):
+        if hasattr(self, "_fit"):
             self._fit(X, **kwargs)
         else:
             raise NotImplementedError
@@ -42,7 +42,7 @@ class RandomVariable(object):
     def pdf(self, X):
         self._check_input(X)
         if hasattr(self, "_pdf"):
-            return _pdf(self, X)
+            return self._pdf(X)
         else:
             raise NotImplementedError
 
