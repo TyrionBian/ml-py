@@ -24,6 +24,8 @@ class Categorical(RandomVariable):
                 raise ValueError("mu must be non-negative")
             if not np.allclose(mu.sum(), 1):
                 raise ValueError("sum of mu must be 1")
+            self.n_classes = mu.size
+            self.parameter["mu"] = mu
         elif isinstance(mu, Dirichlet):
             self.n_classes = mu.size
             self.parameter["mu"] = mu
@@ -61,11 +63,11 @@ class Categorical(RandomVariable):
     def _fit(self, X):
         if isinstance(self.mu, Dirichlet):
             self._bayes(X)
-        if isinstance(self.mu, RandomVariable):
+        elif isinstance(self.mu, RandomVariable):
             raise NotImplementedError
         else:
             self._ml(X)
-    
+
     def _ml(self, X):
         self._check_input(X)
         self.mu = np.mean(X, axis=0)
