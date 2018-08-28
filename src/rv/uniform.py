@@ -58,6 +58,3 @@ class Uniform(RandomVariable):
         u01 = np.random.uniform(size=(sample_size,) + self.shape)
         return u01 * (self.high - self.low) + self.low
     
-
-
-
