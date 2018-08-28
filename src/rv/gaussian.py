@@ -8,12 +8,13 @@ class Gaussian(RandomVariable):
     p(x|mu, var)
     = exp{-0.5 * (x - mu)^2 / var} / sqrt(2pi * var)
     """
+
     def __init__(self, mu=None, var=None, tau=None):
         super().__init__()
         self.mu = mu
         if var is not None:
             self.var = var
-        if tau is not None:
+        elif tau is not None:
             self.tau = tau
         else:
             self.var = None
@@ -22,7 +23,7 @@ class Gaussian(RandomVariable):
     @property
     def mu(self):
         return self.parameter["mu"]
-    
+
     @mu.setter
     def mu(self, mu):
         if isinstance(mu, (int, float, np.number)):
@@ -106,11 +107,11 @@ class Gaussian(RandomVariable):
             return None
 
     def _fit(self, X):
-        mu_is_gaussion = isinstance(self.mu, Gaussian)
+        mu_is_gaussian = isinstance(self.mu, Gaussian)
         tau_is_gamma = isinstance(self.tau, Gamma)
-        if mu_is_gaussion and tau_is_gamma:
+        if mu_is_gaussian and tau_is_gamma:
             raise NotImplementedError
-        elif mu_is_gaussion:
+        elif mu_is_gaussian:
             self._bayes_mu(X)
         elif tau_is_gamma:
             self._bayes_tau(X)
@@ -149,25 +150,25 @@ class Gaussian(RandomVariable):
 
     def _bayes(self, X):
         N = len(X)
-        mu_is_gaussion = isinstance(self.mu, Gaussian)
+        mu_is_gaussian = isinstance(self.mu, Gaussian)
         tau_is_gamma = isinstance(self.tau, Gamma)
-        if mu_is_gaussion and tau_is_gamma:
-            raise NotImplementedError
-        elif mu_is_gaussion:
-            mu = np.mean(X, axis=0)
+        if mu_is_gaussian and not tau_is_gamma:
+            mu = np.mean(X, 0)
             tau = self.mu.tau + N * self.tau
             self.mu = Gaussian(
                 mu=(self.mu.mu * self.mu.tau + N * mu * self.tau) / tau,
                 tau=tau
             )
-        elif tau_is_gamma:
+        elif not mu_is_gaussian and tau_is_gamma:
             var = np.var(X, axis=0)
             a = self.tau.a + 0.5 * N
             b = self.tau.b + 0.5 * N * var
             self.tau = Gamma(a, b)
+        elif mu_is_gaussian and tau_is_gamma:
+            raise NotImplementedError
         else:
-            NotImplementedError
-    
+            raise NotImplementedError
+
     def _pdf(self, X):
         d = X - self.mu
         return (
@@ -180,6 +181,5 @@ class Gaussian(RandomVariable):
             scale=np.sqrt(self.var),
             size=(sample_size,) + self.shape
         )
-
 
 
