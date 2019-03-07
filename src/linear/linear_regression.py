@@ -19,7 +19,7 @@ class LinearRegression(Regression):
             training dependent variable
         """
         self.w = np.linalg.pinv(X) @ t
-        self.var = np.mean(X @ self.w - t)
+        self.var = np.mean(X @ self.w - t) # @ operator calls the array's __matmul__
     
     def predict(self, X:np.ndarray, return_std:bool=False):
         """
